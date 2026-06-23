@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Quest ⚔️</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════
+       PANTALLA DE AUTH
+  ════════════════════════════════════════ -->
+  <div id="auth-screen" class="screen">
+    <div class="auth-bg">
+      <div class="auth-blob auth-blob--1"></div>
+      <div class="auth-blob auth-blob--2"></div>
+      <div class="auth-blob auth-blob--3"></div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="auth-logo__icon">⚔️</div>
+        <h1 class="auth-logo__title">Daily Quest</h1>
+        <p class="auth-logo__sub">Completa misiones. Gana XP. Sube de nivel.</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Iniciar Sesión</button>
+        <button class="auth-tab" data-tab="register">Registrarse</button>
+      </div>
+
+      <form id="login-form" class="auth-form active">
+        <div class="form-group">
+          <label class="form-label">Usuario</label>
+          <input class="form-input" type="text" id="login-username" placeholder="tu_usuario" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input class="form-input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <p class="auth-error hidden" id="login-error"></p>
+        <button type="submit" class="btn btn--primary btn--full">
+          <span>🗡️</span> Entrar al mundo
+        </button>
+      </form>
+
+      <form id="register-form" class="auth-form">
+        <div class="form-group">
+          <label class="form-label">Nombre de aventurero</label>
+          <input class="form-input" type="text" id="register-name" placeholder="Héroe sin nombre...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Usuario</label>
+          <input class="form-input" type="text" id="register-username" placeholder="tu_usuario (3-20 chars)" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input class="form-input" type="password" id="register-password" placeholder="Mínimo 4 caracteres" autocomplete="new-password">
+        </div>
+        <p class="auth-error hidden" id="register-error"></p>
+        <button type="submit" class="btn btn--primary btn--full">
+          <span>🌟</span> Comenzar aventura
+        </button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       APP PRINCIPAL
+  ════════════════════════════════════════ -->
+  <div id="app-screen" class="screen hidden">
+
+    <!-- Header móvil -->
+    <header class="mobile-header">
+      <button class="icon-btn" id="mobile-menu-btn">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <span class="mobile-title">⚔️ Daily Quest</span>
+      <div class="level-chip" id="mobile-level-chip">Nv.1</div>
+    </header>
+
+    <!-- Overlay mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- ── SIDEBAR ─────────────────────────── -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__brand">
+        <span class="sidebar__brand-text">⚔️ Daily Quest</span>
+        <button class="icon-btn" id="sidebar-close">✕</button>
+      </div>
+
+      <div class="sidebar-profile">
+        <div class="avatar" id="sidebar-avatar">?</div>
+        <div>
+          <p class="sidebar-profile__name" id="sidebar-name">---</p>
+          <p class="sidebar-profile__sub" id="sidebar-level-text">Nivel 1 · Novato</p>
+        </div>
+      </div>
+
+      <div class="xp-section">
+        <div class="xp-row">
+          <span class="xp-label">EXP</span>
+          <span class="xp-nums" id="xp-label-text">0 / 100</span>
+        </div>
+        <div class="xp-track">
+          <div class="xp-track__fill" id="xp-bar-fill" style="width:0%"></div>
+          <div class="xp-track__glow" id="xp-bar-glow" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="quick-stats">
+        <div class="quick-stat">
+          <span class="quick-stat__icon">🔥</span>
+          <span class="quick-stat__val" id="q-streak">0</span>
+          <span class="quick-stat__lbl">Racha</span>
+        </div>
+        <div class="quick-stat">
+          <span class="quick-stat__icon">⭐</span>
+          <span class="quick-stat__val" id="q-xp">0</span>
+          <span class="quick-stat__lbl">XP Total</span>
+        </div>
+        <div class="quick-stat">
+          <span class="quick-stat__icon">📅</span>
+          <span class="quick-stat__val" id="q-days">0</span>
+          <span class="quick-stat__lbl">Días</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-view="quests">
+          <span class="nav-btn__icon">🗡️</span> Misiones
+        </button>
+        <button class="nav-btn" data-view="stats">
+          <span class="nav-btn__icon">📊</span> Estadísticas
+        </button>
+        <button class="nav-btn" data-view="settings">
+          <span class="nav-btn__icon">⚙️</span> Configuración
+        </button>
+      </nav>
+
+      <button class="sidebar-logout" id="logout-btn">
+        🚪 Cerrar sesión
+      </button>
+    </aside>
+
+    <!-- ── MAIN ────────────────────────────── -->
+    <main class="main">
+
+      <!-- VISTA: MISIONES -->
+      <div class="view active" id="view-quests">
+        <div class="view-header">
+          <div>
+            <h2 class="view-title">Misiones del Día</h2>
+            <p class="view-sub" id="today-date-label"></p>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="progress-badge" id="progress-badge">0 / 0</div>
+            <button class="btn btn--primary" id="new-quest-btn" style="padding:8px 16px;font-size:.85rem">
+              + Nueva misión
+            </button>
+          </div>
+        </div>
+
+        <!-- Cita motivacional del día -->
+        <div class="quote-card" id="quote-card">
+          <span class="quote-card__ico">💬</span>
+          <div>
+            <p class="quote-card__text" id="quote-text"></p>
+            <p class="quote-card__author" id="quote-author"></p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-card__left">
+            <div class="summary-icon">⚡</div>
+            <div>
+              <p class="summary-label">XP Ganado Hoy</p>
+              <p class="summary-value"><span id="daily-xp-count">0</span> XP</p>
+            </div>
+          </div>
+          <div class="summary-card__right">
+            <div class="donut-wrap">
+              <svg class="donut" viewBox="0 0 36 36">
+                <circle class="donut__bg"   cx="18" cy="18" r="15.9" fill="none" stroke-width="3.5"/>
+                <circle class="donut__ring" id="donut-ring" cx="18" cy="18" r="15.9" fill="none" stroke-width="3.5"
+                  stroke-dasharray="0 100" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+              </svg>
+              <span class="donut__pct" id="donut-pct">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="quests-grid" class="quests-grid"></div>
+      </div>
+
+      <!-- VISTA: ESTADÍSTICAS -->
+      <div class="view" id="view-stats">
+        <div class="view-header">
+          <h2 class="view-title">Estadísticas</h2>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-card__ico">🏆</div><div class="stat-card__val" id="s-level">1</div><div class="stat-card__lbl">Nivel</div></div>
+          <div class="stat-card"><div class="stat-card__ico">⭐</div><div class="stat-card__val" id="s-xp">0</div><div class="stat-card__lbl">XP Total</div></div>
+          <div class="stat-card"><div class="stat-card__ico">🔥</div><div class="stat-card__val" id="s-streak">0</div><div class="stat-card__lbl">Racha</div></div>
+          <div class="stat-card"><div class="stat-card__ico">🎯</div><div class="stat-card__val" id="s-best">0</div><div class="stat-card__lbl">Mejor Racha</div></div>
+          <div class="stat-card"><div class="stat-card__ico">📅</div><div class="stat-card__val" id="s-days">0</div><div class="stat-card__lbl">Días Activo</div></div>
+          <div class="stat-card"><div class="stat-card__ico">✅</div><div class="stat-card__val" id="s-done">0</div><div class="stat-card__lbl">Quests</div></div>
+        </div>
+
+        <div class="block">
+          <h3 class="block-title">Progreso de Nivel</h3>
+          <div class="level-progress">
+            <div class="level-progress__top">
+              <span class="level-chip-lg" id="s-level-chip">Nv. 1</span>
+              <span class="level-rank-text" id="s-rank">Novato</span>
+              <span class="level-next-text" id="s-next">→ Nv. 2</span>
+            </div>
+            <div class="xp-track xp-track--lg">
+              <div class="xp-track__fill" id="s-xp-fill" style="width:0%"></div>
+              <div class="xp-track__glow" style="width:0%" id="s-xp-glow"></div>
+            </div>
+            <div class="xp-track-labels">
+              <span id="s-xp-curr">0 XP</span>
+              <span id="s-xp-needed">100 XP para el próximo nivel</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="block">
+          <h3 class="block-title">📈 XP esta semana</h3>
+          <div class="week-chart" id="week-chart"></div>
+        </div>
+
+        <div class="block">
+          <h3 class="block-title">🏅 Logros</h3>
+          <div class="achievements-grid" id="achievements-grid">
+            <p class="empty-msg">Completa misiones para desbloquear logros.</p>
+          </div>
+        </div>
+
+        <div class="block">
+          <h3 class="block-title">Actividad Reciente</h3>
+          <div id="activity-list" class="activity-list">
+            <p class="empty-msg">Nada aún. ¡Completa tus primeras misiones!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA: CONFIGURACIÓN -->
+      <div class="view" id="view-settings">
+        <div class="view-header">
+          <h2 class="view-title">Configuración</h2>
+        </div>
+
+        <!-- Foto de perfil -->
+        <div class="setting-block">
+          <h3 class="setting-block__title">🖼️ Foto de perfil</h3>
+          <div class="avatar-upload-row">
+            <div class="avatar-lg" id="settings-avatar">M</div>
+            <div class="avatar-upload-btns">
+              <button class="btn btn--primary" id="change-avatar-btn">📷 Cambiar foto</button>
+              <button class="btn btn--ghost" id="remove-avatar-btn">Quitar</button>
+            </div>
+          </div>
+          <input type="file" id="avatar-file-input" accept="image/*" style="display:none">
+        </div>
+
+        <div class="setting-block">
+          <h3 class="setting-block__title">🎨 Color del tema</h3>
+          <p class="setting-block__desc">Elige el color principal de la interfaz</p>
+          <div class="color-presets" id="color-presets"></div>
+          <div class="custom-hue">
+            <label class="form-label">Color personalizado</label>
+            <div class="hue-row">
+              <input type="range" class="hue-slider" id="hue-slider" min="0" max="360" value="260">
+              <div class="hue-dot" id="hue-dot"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-block">
+          <h3 class="setting-block__title">🌙 Apariencia</h3>
+          <div class="toggle-row">
+            <div>
+              <p class="toggle-row__name">Modo oscuro</p>
+              <p class="toggle-row__desc">Fondo negro, menos cansancio visual</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="dark-mode-toggle" checked>
+              <span class="switch__track"><span class="switch__thumb"></span></span>
+            </label>
+          </div>
+          <div class="toggle-row" style="margin-top:14px">
+            <div>
+              <p class="toggle-row__name">Sonidos</p>
+              <p class="toggle-row__desc">Efectos de sonido al completar misiones</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="sound-toggle" checked>
+              <span class="switch__track"><span class="switch__thumb"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="setting-block">
+          <h3 class="setting-block__title">👤 Perfil</h3>
+          <div class="form-group">
+            <label class="form-label">Nombre de aventurero</label>
+            <div class="input-row">
+              <input class="form-input" type="text" id="settings-name" placeholder="Tu nombre...">
+              <button class="btn btn--primary" id="save-name-btn">Guardar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-block setting-block--danger">
+          <h3 class="setting-block__title">⚠️ Zona de peligro</h3>
+          <p class="setting-block__desc">Esta acción borra todo tu progreso permanentemente.</p>
+          <button class="btn btn--danger" id="reset-btn">Borrar todo mi progreso</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       MODAL: CREAR MISIÓN
+  ════════════════════════════════════════ -->
+  <div class="modal-bg hidden" id="create-quest-bg">
+    <div class="cq-modal">
+      <div class="cq-modal__header">
+        <h3 class="cq-modal__title">✨ Nueva Misión</h3>
+        <button class="icon-btn" id="cq-x-btn">✕</button>
+      </div>
+
+      <form id="create-quest-form">
+        <div class="form-group">
+          <label class="form-label">Nombre de la misión</label>
+          <input class="form-input" type="text" id="cq-name"
+            placeholder="Ej: Leer 30 minutos..." maxlength="80" required autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Categoría</label>
+          <div class="cq-cat-grid" id="cq-cat-grid">
+            <button type="button" class="cq-cat active" data-cat="salud">
+              <span class="cq-cat__ico">💚</span> Salud
+            </button>
+            <button type="button" class="cq-cat" data-cat="productividad">
+              <span class="cq-cat__ico">⚡</span> Productividad
+            </button>
+            <button type="button" class="cq-cat" data-cat="aprendizaje">
+              <span class="cq-cat__ico">📚</span> Aprendizaje
+            </button>
+            <button type="button" class="cq-cat" data-cat="personal">
+              <span class="cq-cat__ico">🌟</span> Personal
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">XP al completar</label>
+          <div class="cq-xp-grid">
+            <button type="button" class="cq-xp" data-xp="10">10 XP</button>
+            <button type="button" class="cq-xp active" data-xp="20">20 XP</button>
+            <button type="button" class="cq-xp" data-xp="30">30 XP</button>
+            <button type="button" class="cq-xp" data-xp="40">40 XP</button>
+            <button type="button" class="cq-xp" data-xp="50">50 XP</button>
+          </div>
+        </div>
+
+        <p class="auth-error hidden" id="cq-error"></p>
+
+        <div class="cq-modal__actions">
+          <button type="button" class="btn btn--ghost" id="cq-cancel-btn">Cancelar</button>
+          <button type="submit" class="btn btn--primary">Crear misión ⚔️</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       MODAL: LEVEL UP
+  ════════════════════════════════════════ -->
+  <div class="modal-bg hidden" id="levelup-bg">
+    <div class="levelup-modal">
+      <div class="levelup-particles" id="levelup-particles"></div>
+      <div class="levelup-star">✨</div>
+      <h2 class="levelup-title">¡SUBISTE DE NIVEL!</h2>
+      <div class="levelup-num" id="levelup-num">Nivel 2</div>
+      <p class="levelup-rank" id="levelup-rank">Guerrero</p>
+      <p class="levelup-msg">Sigue completando misiones para crecer más fuerte</p>
+      <button class="btn btn--primary" id="levelup-close">¡Continuar! 🚀</button>
+    </div>
+  </div>
+
+  <!-- TOASTS -->
+  <div class="toasts" id="toasts"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
