@@ -3,15 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daily Quest ⚔️</title>
+  <title>Levara ⚔️</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <!-- ════════════════════════════════════════
-       PANTALLA DE AUTH
+       PANTALLA DE CONFIGURACIÓN INICIAL
   ════════════════════════════════════════ -->
-  <div id="auth-screen" class="screen">
+  <div id="setup-screen" class="screen hidden">
     <div class="auth-bg">
       <div class="auth-blob auth-blob--1"></div>
       <div class="auth-blob auth-blob--2"></div>
@@ -20,48 +23,27 @@
     <div class="auth-card">
       <div class="auth-logo">
         <div class="auth-logo__icon">⚔️</div>
-        <h1 class="auth-logo__title">Daily Quest</h1>
-        <p class="auth-logo__sub">Completa misiones. Gana XP. Sube de nivel.</p>
+        <h1 class="auth-logo__title">Levara</h1>
+
       </div>
 
-      <div class="auth-tabs">
-        <button class="auth-tab active" data-tab="login">Iniciar Sesión</button>
-        <button class="auth-tab" data-tab="register">Registrarse</button>
-      </div>
-
-      <form id="login-form" class="auth-form active">
+      <form id="setup-form" style="display:flex;flex-direction:column;gap:16px;">
         <div class="form-group">
-          <label class="form-label">Usuario</label>
-          <input class="form-input" type="text" id="login-username" placeholder="tu_usuario" autocomplete="username">
+          <label class="form-label">¿Cómo te llamas, aventurero?</label>
+          <input class="form-input" type="text" id="setup-name"
+            placeholder="Tu nombre..." maxlength="30" autocomplete="off" required>
         </div>
-        <div class="form-group">
-          <label class="form-label">Contraseña</label>
-          <input class="form-input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
-        </div>
-        <p class="auth-error hidden" id="login-error"></p>
         <button type="submit" class="btn btn--primary btn--full">
-          <span>🗡️</span> Entrar al mundo
+          <span>🚀</span> Comenzar aventura
         </button>
       </form>
 
-      <form id="register-form" class="auth-form">
-        <div class="form-group">
-          <label class="form-label">Nombre de aventurero</label>
-          <input class="form-input" type="text" id="register-name" placeholder="Héroe sin nombre...">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Usuario</label>
-          <input class="form-input" type="text" id="register-username" placeholder="tu_usuario (3-20 chars)" autocomplete="username">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Contraseña</label>
-          <input class="form-input" type="password" id="register-password" placeholder="Mínimo 4 caracteres" autocomplete="new-password">
-        </div>
-        <p class="auth-error hidden" id="register-error"></p>
-        <button type="submit" class="btn btn--primary btn--full">
-          <span>🌟</span> Comenzar aventura
-        </button>
-      </form>
+      <div class="setup-divider"><span>o</span></div>
+
+      <button class="btn btn--ghost btn--full" id="setup-import-btn">
+        📂 Importar backup existente
+      </button>
+      <input type="file" id="setup-import-file" accept=".json" style="display:none">
     </div>
   </div>
 
@@ -73,30 +55,33 @@
 
     <!-- Header móvil -->
     <header class="mobile-header">
-      <button class="icon-btn" id="mobile-menu-btn">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
+      <button class="icon-btn" id="mobile-menu-btn" aria-label="Perfil">
+        <div class="avatar avatar--sm" id="mobile-avatar">?</div>
       </button>
-      <span class="mobile-title">⚔️ Daily Quest</span>
-      <div class="level-chip" id="mobile-level-chip">Nv.1</div>
+      <span class="mobile-title">⚔️ Levara</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="notif-bell-btn" id="notif-bell-btn" title="Quests pendientes">
+          🔔<span class="notif-badge hidden" id="notif-badge">0</span>
+        </button>
+        <div class="level-chip" id="mobile-level-chip">Nv.1</div>
+      </div>
     </header>
 
-    <!-- Overlay mobile -->
+    <!-- Overlay sidebar mobile -->
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <!-- ── SIDEBAR ─────────────────────────── -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar__brand">
-        <span class="sidebar__brand-text">⚔️ Daily Quest</span>
-        <button class="icon-btn" id="sidebar-close">✕</button>
+        <span class="sidebar__brand-text">⚔️ Levara</span>
+        <button class="icon-btn" id="sidebar-close" aria-label="Cerrar">✕</button>
       </div>
 
       <div class="sidebar-profile">
         <div class="avatar" id="sidebar-avatar">?</div>
         <div>
           <p class="sidebar-profile__name" id="sidebar-name">---</p>
-          <p class="sidebar-profile__sub" id="sidebar-level-text">Nivel 1 · Novato</p>
+          <p class="sidebar-profile__sub"  id="sidebar-level-text">Nivel 1 · Novato</p>
         </div>
       </div>
 
@@ -131,7 +116,7 @@
 
       <nav class="sidebar-nav">
         <button class="nav-btn active" data-view="quests">
-          <span class="nav-btn__icon">🗡️</span> Misiones
+          <span class="nav-btn__icon">📋</span> Jornada
         </button>
         <button class="nav-btn" data-view="stats">
           <span class="nav-btn__icon">📊</span> Estadísticas
@@ -142,33 +127,32 @@
       </nav>
 
       <button class="sidebar-logout" id="logout-btn">
-        🚪 Cerrar sesión
+        🚪 Salir
       </button>
     </aside>
 
     <!-- ── MAIN ────────────────────────────── -->
     <main class="main">
 
-      <!-- VISTA: MISIONES -->
+      <!-- VISTA: TAREAS -->
       <div class="view active" id="view-quests">
         <div class="view-header">
           <div>
-            <h2 class="view-title">Misiones del Día</h2>
+            <h2 class="view-title">Tareas del Día</h2>
             <p class="view-sub" id="today-date-label"></p>
           </div>
-          <div style="display:flex;align-items:center;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
             <div class="progress-badge" id="progress-badge">0 / 0</div>
             <button class="btn btn--primary" id="new-quest-btn" style="padding:8px 16px;font-size:.85rem">
-              + Nueva misión
+              + Nueva tarea
             </button>
           </div>
         </div>
 
-        <!-- Cita motivacional del día -->
         <div class="quote-card" id="quote-card">
           <span class="quote-card__ico">💬</span>
           <div>
-            <p class="quote-card__text" id="quote-text"></p>
+            <p class="quote-card__text"   id="quote-text"></p>
             <p class="quote-card__author" id="quote-author"></p>
           </div>
         </div>
@@ -185,8 +169,9 @@
             <div class="donut-wrap">
               <svg class="donut" viewBox="0 0 36 36">
                 <circle class="donut__bg"   cx="18" cy="18" r="15.9" fill="none" stroke-width="3.5"/>
-                <circle class="donut__ring" id="donut-ring" cx="18" cy="18" r="15.9" fill="none" stroke-width="3.5"
-                  stroke-dasharray="0 100" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+                <circle class="donut__ring" id="donut-ring" cx="18" cy="18" r="15.9" fill="none"
+                  stroke-width="3.5" stroke-dasharray="0 100" stroke-linecap="round"
+                  transform="rotate(-90 18 18)"/>
               </svg>
               <span class="donut__pct" id="donut-pct">0%</span>
             </div>
@@ -221,11 +206,11 @@
             </div>
             <div class="xp-track xp-track--lg">
               <div class="xp-track__fill" id="s-xp-fill" style="width:0%"></div>
-              <div class="xp-track__glow" style="width:0%" id="s-xp-glow"></div>
+              <div class="xp-track__glow"  id="s-xp-glow"  style="width:0%"></div>
             </div>
             <div class="xp-track-labels">
               <span id="s-xp-curr">0 XP</span>
-              <span id="s-xp-needed">100 XP para el próximo nivel</span>
+              <span id="s-xp-needed">100 XP para el siguiente nivel</span>
             </div>
           </div>
         </div>
@@ -238,14 +223,14 @@
         <div class="block">
           <h3 class="block-title">🏅 Logros</h3>
           <div class="achievements-grid" id="achievements-grid">
-            <p class="empty-msg">Completa misiones para desbloquear logros.</p>
+            <p class="empty-msg">Completa tareas para desbloquear logros.</p>
           </div>
         </div>
 
         <div class="block">
           <h3 class="block-title">Actividad Reciente</h3>
           <div id="activity-list" class="activity-list">
-            <p class="empty-msg">Nada aún. ¡Completa tus primeras misiones!</p>
+            <p class="empty-msg">Nada aún. ¡Completa tus primeras tareas!</p>
           </div>
         </div>
       </div>
@@ -260,15 +245,16 @@
         <div class="setting-block">
           <h3 class="setting-block__title">🖼️ Foto de perfil</h3>
           <div class="avatar-upload-row">
-            <div class="avatar-lg" id="settings-avatar">M</div>
+            <div class="avatar-lg" id="settings-avatar">?</div>
             <div class="avatar-upload-btns">
               <button class="btn btn--primary" id="change-avatar-btn">📷 Cambiar foto</button>
-              <button class="btn btn--ghost" id="remove-avatar-btn">Quitar</button>
+              <button class="btn btn--ghost"   id="remove-avatar-btn">Quitar</button>
             </div>
           </div>
           <input type="file" id="avatar-file-input" accept="image/*" style="display:none">
         </div>
 
+        <!-- Color del tema -->
         <div class="setting-block">
           <h3 class="setting-block__title">🎨 Color del tema</h3>
           <p class="setting-block__desc">Elige el color principal de la interfaz</p>
@@ -282,12 +268,13 @@
           </div>
         </div>
 
+        <!-- Apariencia + Sonido + Notificaciones -->
         <div class="setting-block">
-          <h3 class="setting-block__title">🌙 Apariencia</h3>
+          <h3 class="setting-block__title">🌙 Apariencia y sonido</h3>
           <div class="toggle-row">
             <div>
               <p class="toggle-row__name">Modo oscuro</p>
-              <p class="toggle-row__desc">Fondo negro, menos cansancio visual</p>
+              <p class="toggle-row__desc">Fondo oscuro, menos cansancio visual</p>
             </div>
             <label class="switch">
               <input type="checkbox" id="dark-mode-toggle" checked>
@@ -297,72 +284,117 @@
           <div class="toggle-row" style="margin-top:14px">
             <div>
               <p class="toggle-row__name">Sonidos</p>
-              <p class="toggle-row__desc">Efectos de sonido al completar misiones</p>
+              <p class="toggle-row__desc">Efectos al completar tareas</p>
             </div>
             <label class="switch">
               <input type="checkbox" id="sound-toggle" checked>
               <span class="switch__track"><span class="switch__thumb"></span></span>
             </label>
           </div>
+          <div class="toggle-row" style="margin-top:14px">
+            <div>
+              <p class="toggle-row__name">🔔 Notificaciones</p>
+              <p class="toggle-row__desc">Aviso 1 h antes de que reinicien las tareas</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="notif-toggle">
+              <span class="switch__track"><span class="switch__thumb"></span></span>
+            </label>
+          </div>
         </div>
 
+        <!-- Nombre -->
         <div class="setting-block">
-          <h3 class="setting-block__title">👤 Perfil</h3>
+          <h3 class="setting-block__title">👤 Nombre</h3>
           <div class="form-group">
             <label class="form-label">Nombre de aventurero</label>
             <div class="input-row">
-              <input class="form-input" type="text" id="settings-name" placeholder="Tu nombre...">
+              <input class="form-input" type="text" id="settings-name" placeholder="Tu nombre..." maxlength="30">
               <button class="btn btn--primary" id="save-name-btn">Guardar</button>
             </div>
           </div>
         </div>
 
-        <div class="setting-block setting-block--danger">
-          <h3 class="setting-block__title">⚠️ Zona de peligro</h3>
-          <p class="setting-block__desc">Esta acción borra todo tu progreso permanentemente.</p>
-          <button class="btn btn--danger" id="reset-btn">Borrar todo mi progreso</button>
-        </div>
-      </div>
-
-    </main>
-  </div>
-
-
-  <!-- ════════════════════════════════════════
-       MODAL: CREAR MISIÓN
-  ════════════════════════════════════════ -->
-  <div class="modal-bg hidden" id="create-quest-bg">
-    <div class="cq-modal">
-      <div class="cq-modal__header">
-        <h3 class="cq-modal__title">✨ Nueva Misión</h3>
-        <button class="icon-btn" id="cq-x-btn">✕</button>
-      </div>
-
-      <form id="create-quest-form">
-        <div class="form-group">
-          <label class="form-label">Nombre de la misión</label>
-          <input class="form-input" type="text" id="cq-name"
-            placeholder="Ej: Leer 30 minutos..." maxlength="80" required autocomplete="off">
+        <!-- Exportar / Importar -->
+        <div class="setting-block">
+          <h3 class="setting-block__title">💾 Datos</h3>
+          <p class="setting-block__desc">Exporta tu progreso para hacer backup o llevarlo a otro dispositivo.</p>
+          <div class="data-actions-row">
+            <button class="btn btn--primary" id="export-btn">📥 Exportar backup</button>
+            <button class="btn btn--ghost"   id="import-btn">📂 Importar backup</button>
+          </div>
+          <input type="file" id="import-file" accept=".json" style="display:none">
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Categoría</label>
-          <div class="cq-cat-grid" id="cq-cat-grid">
-            <button type="button" class="cq-cat active" data-cat="salud">
-              <span class="cq-cat__ico">💚</span> Salud
+        <!-- Fuente -->
+        <div class="setting-block">
+          <h3 class="setting-block__title">🔤 Fuente</h3>
+          <p class="setting-block__desc">Cambia entre la fuente normal y el modo pixel retro.</p>
+          <div class="font-toggle-row">
+            <button class="font-opt active" id="font-normal-btn" data-font="">
+              <span class="font-opt__preview">Aa</span>
+              <span class="font-opt__label">Normal</span>
             </button>
-            <button type="button" class="cq-cat" data-cat="productividad">
-              <span class="cq-cat__ico">⚡</span> Productividad
-            </button>
-            <button type="button" class="cq-cat" data-cat="aprendizaje">
-              <span class="cq-cat__ico">📚</span> Aprendizaje
-            </button>
-            <button type="button" class="cq-cat" data-cat="personal">
-              <span class="cq-cat__ico">🌟</span> Personal
+            <button class="font-opt" id="font-pixel-btn" data-font="pixel">
+              <span class="font-opt__preview font-opt__preview--pixel">Aa</span>
+              <span class="font-opt__label">Pixel</span>
             </button>
           </div>
         </div>
 
+        <!-- Zona de peligro -->
+        <div class="setting-block setting-block--danger">
+          <h3 class="setting-block__title">⚠️ Zona de peligro</h3>
+          <p class="setting-block__desc">Borra todo tu progreso. Esta acción no se puede deshacer.</p>
+          <button class="btn btn--danger" id="reset-btn">Borrar todo mi progreso</button>
+        </div>
+
+      </div><!-- /view-settings -->
+    </main>
+
+    <!-- Mobile bottom nav -->
+    <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+      <button class="mbn-btn active" data-view="quests">
+        <span class="mbn-icon">📋</span>
+        <span class="mbn-label">Jornada</span>
+      </button>
+      <button class="mbn-btn" data-view="stats">
+        <span class="mbn-icon">📊</span>
+        <span class="mbn-label">Stats</span>
+      </button>
+      <button class="mbn-btn" data-view="settings">
+        <span class="mbn-icon">⚙️</span>
+        <span class="mbn-label">Config</span>
+      </button>
+    </nav>
+
+  </div><!-- /app-screen -->
+
+
+  <!-- ════════════════════════════════════════
+       MODAL: CREAR TAREA
+  ════════════════════════════════════════ -->
+  <div class="modal-bg hidden" id="create-quest-bg">
+    <div class="cq-modal">
+      <div class="cq-modal__header">
+        <h3 class="cq-modal__title">✨ Nueva Tarea</h3>
+        <button class="icon-btn" id="cq-x-btn">✕</button>
+      </div>
+      <form id="create-quest-form">
+        <div class="form-group">
+          <label class="form-label">Nombre de la tarea</label>
+          <input class="form-input" type="text" id="cq-name"
+            placeholder="Ej: Leer 30 minutos..." maxlength="80" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Categoría</label>
+          <div class="cq-cat-grid">
+            <button type="button" class="cq-cat active" data-cat="salud">       <span class="cq-cat__ico">💚</span> Salud</button>
+            <button type="button" class="cq-cat"        data-cat="productividad"><span class="cq-cat__ico">⚡</span> Productividad</button>
+            <button type="button" class="cq-cat"        data-cat="aprendizaje"> <span class="cq-cat__ico">📚</span> Aprendizaje</button>
+            <button type="button" class="cq-cat"        data-cat="personal">    <span class="cq-cat__ico">🌟</span> Personal</button>
+          </div>
+        </div>
         <div class="form-group">
           <label class="form-label">XP al completar</label>
           <div class="cq-xp-grid">
@@ -373,12 +405,10 @@
             <button type="button" class="cq-xp" data-xp="50">50 XP</button>
           </div>
         </div>
-
         <p class="auth-error hidden" id="cq-error"></p>
-
         <div class="cq-modal__actions">
-          <button type="button" class="btn btn--ghost" id="cq-cancel-btn">Cancelar</button>
-          <button type="submit" class="btn btn--primary">Crear misión ⚔️</button>
+          <button type="button" class="btn btn--ghost"   id="cq-cancel-btn">Cancelar</button>
+          <button type="submit" class="btn btn--primary">Crear tarea ⚔️</button>
         </div>
       </form>
     </div>
@@ -392,9 +422,9 @@
       <div class="levelup-particles" id="levelup-particles"></div>
       <div class="levelup-star">✨</div>
       <h2 class="levelup-title">¡SUBISTE DE NIVEL!</h2>
-      <div class="levelup-num" id="levelup-num">Nivel 2</div>
-      <p class="levelup-rank" id="levelup-rank">Guerrero</p>
-      <p class="levelup-msg">Sigue completando misiones para crecer más fuerte</p>
+      <div class="levelup-num"  id="levelup-num">Nivel 2</div>
+      <p  class="levelup-rank" id="levelup-rank">Guerrero</p>
+      <p  class="levelup-msg">Sigue completando tareas para crecer más fuerte</p>
       <button class="btn btn--primary" id="levelup-close">¡Continuar! 🚀</button>
     </div>
   </div>

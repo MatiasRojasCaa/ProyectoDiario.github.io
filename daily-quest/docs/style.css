@@ -64,6 +64,39 @@
 
 html { font-size: 16px; scroll-behavior: smooth; }
 
+/* ── Pixel font mode ── */
+/* Reducir base rem (html) de 16px → 10px para que todos los rem escalen */
+[data-font="pixel"] { font-size: 12px; }
+[data-font="pixel"],
+[data-font="pixel"] body,
+[data-font="pixel"] button,
+[data-font="pixel"] input,
+[data-font="pixel"] label,
+[data-font="pixel"] h1, [data-font="pixel"] h2, [data-font="pixel"] h3,
+[data-font="pixel"] .nav-btn,
+[data-font="pixel"] .btn,
+[data-font="pixel"] .view-title,
+[data-font="pixel"] .sidebar-profile__name,
+[data-font="pixel"] .quest-name,
+[data-font="pixel"] .stat-card__val,
+[data-font="pixel"] .levelup-title,
+[data-font="pixel"] .auth-logo__title,
+[data-font="pixel"] .cq-modal__title {
+  font-family: 'Press Start 2P', monospace !important;
+  letter-spacing: .02em;
+}
+[data-font="pixel"] body              { font-size: .8rem;  line-height: 1.9; }
+[data-font="pixel"] h3,
+[data-font="pixel"] .cq-modal__title  { font-size: .7rem; }
+[data-font="pixel"] label             { font-size: .6rem;  letter-spacing: .05em; }
+[data-font="pixel"] .view-title       { font-size: .7rem; }
+[data-font="pixel"] .auth-logo__title { font-size: .75rem; }
+[data-font="pixel"] .levelup-title    { font-size: .6rem; }
+[data-font="pixel"] .quest-name       { font-size: .58rem; }
+[data-font="pixel"] .btn              { font-size: .55rem; }
+[data-font="pixel"] .nav-btn          { font-size: .5rem; }
+[data-font="pixel"] .stat-card__val   { font-size: .9rem; }
+
 body {
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
   background: var(--bg);
@@ -813,7 +846,7 @@ a      { color: inherit; text-decoration: none; }
 .quest-del-btn:hover { background: rgba(239,68,68,.15); color: #f87171; }
 
 /* ═══════════════════════════════════════════════
-   CREAR MISIÓN MODAL
+   CREAR TAREA MODAL
 ═══════════════════════════════════════════════ */
 .cq-modal {
   background: var(--surf);
@@ -1001,6 +1034,7 @@ a      { color: inherit; text-decoration: none; }
 ═══════════════════════════════════════════════ */
 @media (max-width: 768px) {
   .mobile-header { display: flex; }
+  .mobile-bottom-nav { display: flex; }
 
   .sidebar {
     transform: translateX(-100%);
@@ -1013,15 +1047,33 @@ a      { color: inherit; text-decoration: none; }
 
   .main {
     margin-left: 0;
-    padding: 80px 16px 24px;
+    padding: 72px 16px 80px; /* bottom padding for bottom nav */
   }
 
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .achievements-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
 
   .summary-card { flex-direction: column; gap: 16px; }
   .summary-card__right { display: flex; justify-content: center; }
 
   .view-header { flex-wrap: wrap; }
+  .view-title  { font-size: 1.3rem; }
+
+  .data-actions-row { flex-direction: column; }
+
+  /* Quest items: bigger tap target */
+  .quest-item    { padding: 14px 12px; }
+  .quest-del-btn { opacity: 1; } /* always visible on mobile */
+
+  /* Week chart smaller labels */
+  .week-label { font-size: .65rem; }
+  .week-xp-num { font-size: .6rem; }
+
+  /* Bottom nav safe area */
+  .mobile-bottom-nav {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 6px);
+    height: auto; min-height: 62px;
+  }
 }
 
 @media (max-width: 400px) {
@@ -1055,6 +1107,161 @@ a      { color: inherit; text-decoration: none; }
 @keyframes xpFloat {
   0%   { opacity:1; transform:translateY(0); }
   100% { opacity:0; transform:translateY(-60px); }
+}
+
+/* ── Setup screen centering (same as auth screen) ── */
+#setup-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════
+   NOTIFICATION BELL
+═══════════════════════════════════════════════ */
+.notif-bell-btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px; height: 34px;
+  border-radius: var(--r-sm);
+  font-size: 1.05rem;
+  color: var(--txt-m);
+  transition: background var(--trans), color var(--trans);
+  cursor: pointer;
+}
+.notif-bell-btn:hover { background: var(--surf-2); color: var(--txt); }
+
+.notif-badge {
+  position: absolute;
+  top: 1px; right: 1px;
+  min-width: 16px; height: 16px;
+  padding: 0 3px;
+  background: #ef4444;
+  color: #fff;
+  font-size: .62rem;
+  font-weight: 800;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  pointer-events: none;
+  animation: badgePop .25s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes badgePop { from { transform: scale(0); } to { transform: scale(1); } }
+
+/* ═══════════════════════════════════════════════
+   FONT TOGGLE
+═══════════════════════════════════════════════ */
+.font-toggle-row {
+  display: flex;
+  gap: 12px;
+}
+.font-opt {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 8px;
+  border-radius: var(--r);
+  background: var(--surf-2);
+  border: 2px solid var(--border);
+  color: var(--txt-m);
+  cursor: pointer;
+  transition: all var(--trans);
+}
+.font-opt:hover  { border-color: var(--primary); color: var(--txt); }
+.font-opt.active { border-color: var(--primary); background: var(--primary-sub); color: var(--primary); }
+
+.font-opt__preview {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.font-opt__preview--pixel {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1rem;
+}
+.font-opt__label {
+  font-size: .78rem;
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════
+   SETUP / ONBOARDING SCREEN
+═══════════════════════════════════════════════ */
+.setup-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+  color: var(--txt-d);
+  font-size: .82rem;
+}
+.setup-divider::before, .setup-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ═══════════════════════════════════════════════
+   MOBILE BOTTOM NAVIGATION
+═══════════════════════════════════════════════ */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 62px;
+  background: var(--surf);
+  border-top: 1px solid var(--border);
+  z-index: 100;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.mbn-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 4px;
+  border-radius: var(--r-sm);
+  color: var(--txt-d);
+  font-size: .7rem;
+  font-weight: 600;
+  transition: color var(--trans), background var(--trans);
+}
+.mbn-btn:hover  { color: var(--txt); }
+.mbn-btn.active { color: var(--primary); }
+.mbn-icon { font-size: 1.3rem; line-height: 1; }
+.mbn-label { letter-spacing: .02em; }
+
+/* small avatar in mobile header */
+.avatar--sm {
+  width: 30px; height: 30px;
+  font-size: .8rem;
+  font-weight: 700;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: grid; place-items: center;
+  box-shadow: 0 0 8px var(--primary-glow);
+}
+
+/* ═══════════════════════════════════════════════
+   DATA EXPORT / IMPORT
+═══════════════════════════════════════════════ */
+.data-actions-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 /* Quest done ripple */
