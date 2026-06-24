@@ -67,28 +67,6 @@ const ACHIEVEMENTS_DEF = {
   all_categories:    { icon:'🎪', name:'Todoterreno',              desc:'Completa 1 tarea de cada categoría en un mismo día' },
 };
 
-const DAILY_QUOTES = [
-  { text:'El éxito es la suma de pequeños esfuerzos repetidos día tras día.',      author:'Robert Collier' },
-  { text:'La disciplina es el puente entre metas y logros.',                        author:'Jim Rohn' },
-  { text:'No importa lo lento que vayas, siempre y cuando no te detengas.',         author:'Confucio' },
-  { text:'La única forma de hacer un gran trabajo es amar lo que haces.',           author:'Steve Jobs' },
-  { text:'El dolor que sientes hoy será la fuerza que sentirás mañana.',           author:'Anónimo' },
-  { text:'Cada día es una nueva oportunidad para cambiar tu vida.',                 author:'Anónimo' },
-  { text:'El cuerpo logra lo que la mente cree.',                                   author:'Napoleon Hill' },
-  { text:'Primero forma un hábito, luego el hábito te forma a ti.',                author:'Jim Ryun' },
-  { text:'No hay atajos a ningún lugar que valga la pena ir.',                     author:'Beverly Sills' },
-  { text:'El progreso, no la perfección, es la clave.',                            author:'Anónimo' },
-  { text:'Cada acción que tomas es un voto por el tipo de persona que quieres ser.',author:'James Clear' },
-  { text:'El secreto de salir adelante es comenzar.',                               author:'Mark Twain' },
-  { text:'Haz hoy lo que otros no harán y mañana tendrás lo que otros no tienen.', author:'Jerry Rice' },
-  { text:'No tienes que ser grande para empezar, pero tienes que empezar para ser grande.', author:'Zig Ziglar' },
-  { text:'La motivación te pone en marcha, el hábito te mantiene en movimiento.',  author:'Jim Ryun' },
-  { text:'Un año desde ahora desearás haber empezado hoy.',                         author:'Karen Lamb' },
-  { text:'El éxito no es definitivo, el fracaso no es fatal: lo que cuenta es el coraje de continuar.', author:'Churchill' },
-  { text:'No cuentes los días, haz que los días cuenten.',                          author:'Muhammad Ali' },
-  { text:'Cree que puedes y ya estás a mitad del camino.',                          author:'Theodore Roosevelt' },
-  { text:'La excelencia no es un acto, es un hábito.',                             author:'Aristóteles' },
-];
 
 /* ═══════════════════════════════════════════════
    SECURITY — HTML escape (prevents XSS)
@@ -550,32 +528,12 @@ function renderSidebar() {
 }
 
 /* ═══════════════════════════════════════════════
-   QUOTE CARD
-═══════════════════════════════════════════════ */
-async function renderQuoteCard() {
-  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-  const fallback  = DAILY_QUOTES[dayOfYear % DAILY_QUOTES.length];
-  $('quote-text').textContent   = `"${fallback.text}"`;
-  $('quote-author').textContent = `— ${fallback.author}`;
-  try {
-    const res  = await fetch('/api/quote');
-    if (!res.ok) return;
-    const data = await res.json();
-    if (data.text) {
-      $('quote-text').textContent   = `"${data.text}"`;
-      $('quote-author').textContent = `— ${data.author || 'Anónimo'}`;
-    }
-  } catch { /* sin red → mantiene fallback */ }
-}
-
-/* ═══════════════════════════════════════════════
    QUESTS VIEW
 ═══════════════════════════════════════════════ */
 function renderQuests() {
   const grid = $('quests-grid');
   const d    = new Date().toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
   $('today-date-label').textContent = d.charAt(0).toUpperCase() + d.slice(1);
-  renderQuoteCard();
 
   if (state.quests.length === 0) {
     grid.innerHTML = `<div class="empty-quests">
